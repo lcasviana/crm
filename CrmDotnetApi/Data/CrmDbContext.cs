@@ -1,5 +1,6 @@
 using CrmDotnetApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CrmDotnetApi.Data;
 
@@ -20,12 +21,17 @@ public class CrmDbContext(DbContextOptions<CrmDbContext> options) : DbContext(op
             entity.HasMany(l => l.Deals).WithOne(d => d.Lead).HasForeignKey(d => d.LeadId);
         });
 
+        var nullableDateTimeConverter = new ValueConverter<DateTime?, string?>(
+            v => v.HasValue ? v.Value.ToString("o") : null,
+            v => v != null ? DateTime.Parse(v) : null);
+
         modelBuilder.Entity<Deal>(entity =>
         {
             entity.HasKey(d => d.Id);
             entity.Property(d => d.Title).IsRequired().HasMaxLength(200);
             entity.Property(d => d.Value).HasColumnType("decimal(18,2)");
             entity.Property(d => d.Stage).HasConversion<string>();
+            entity.Property(d => d.CloseDate).HasConversion(nullableDateTimeConverter);
         });
     }
 }

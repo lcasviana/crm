@@ -11,17 +11,31 @@ public class LeadService(CrmDbContext db, IValidator<LeadRequest> validator) : I
 {
     public async Task<Result<List<LeadResponse>>> GetAllAsync()
     {
-        var leads = await db.Leads.Include(l => l.Deals).AsNoTracking().ToListAsync();
-        return Result<List<LeadResponse>>.Ok(leads.Select(LeadMapper.ToResponse).ToList());
+        try
+        {
+            var leads = await db.Leads.Include(l => l.Deals).AsNoTracking().ToListAsync();
+            return Result<List<LeadResponse>>.Ok(leads.Select(LeadMapper.ToResponse).ToList());
+        }
+        catch (Exception ex)
+        {
+            return Result<List<LeadResponse>>.Fail($"Failed to retrieve leads: {ex.Message}");
+        }
     }
 
     public async Task<Result<LeadResponse>> GetByIdAsync(Guid id)
     {
-        var lead = await db.Leads.Include(l => l.Deals).AsNoTracking().FirstOrDefaultAsync(l => l.Id == id);
-        if (lead is null)
-            return Result<LeadResponse>.Fail($"Lead with id '{id}' was not found.");
+        try
+        {
+            var lead = await db.Leads.Include(l => l.Deals).AsNoTracking().FirstOrDefaultAsync(l => l.Id == id);
+            if (lead is null)
+                return Result<LeadResponse>.Fail($"Lead with id '{id}' was not found.");
 
-        return Result<LeadResponse>.Ok(LeadMapper.ToResponse(lead));
+            return Result<LeadResponse>.Ok(LeadMapper.ToResponse(lead));
+        }
+        catch (Exception ex)
+        {
+            return Result<LeadResponse>.Fail($"Failed to retrieve lead: {ex.Message}");
+        }
     }
 
     public async Task<Result<LeadResponse>> CreateAsync(LeadRequest request)
@@ -30,11 +44,18 @@ public class LeadService(CrmDbContext db, IValidator<LeadRequest> validator) : I
         if (!validation.IsValid)
             return Result<LeadResponse>.Fail(validation.Errors.Select(e => e.ErrorMessage).ToList());
 
-        var entity = LeadMapper.ToEntity(request);
-        db.Leads.Add(entity);
-        await db.SaveChangesAsync();
+        try
+        {
+            var entity = LeadMapper.ToEntity(request);
+            db.Leads.Add(entity);
+            await db.SaveChangesAsync();
 
-        return Result<LeadResponse>.Ok(LeadMapper.ToResponse(entity));
+            return Result<LeadResponse>.Ok(LeadMapper.ToResponse(entity));
+        }
+        catch (Exception ex)
+        {
+            return Result<LeadResponse>.Fail($"Failed to create lead: {ex.Message}");
+        }
     }
 
     public async Task<Result<LeadResponse>> UpdateAsync(Guid id, LeadRequest request)
@@ -43,25 +64,39 @@ public class LeadService(CrmDbContext db, IValidator<LeadRequest> validator) : I
         if (!validation.IsValid)
             return Result<LeadResponse>.Fail(validation.Errors.Select(e => e.ErrorMessage).ToList());
 
-        var entity = await db.Leads.Include(l => l.Deals).FirstOrDefaultAsync(l => l.Id == id);
-        if (entity is null)
-            return Result<LeadResponse>.Fail($"Lead with id '{id}' was not found.");
+        try
+        {
+            var entity = await db.Leads.Include(l => l.Deals).FirstOrDefaultAsync(l => l.Id == id);
+            if (entity is null)
+                return Result<LeadResponse>.Fail($"Lead with id '{id}' was not found.");
 
-        LeadMapper.UpdateEntity(entity, request);
-        await db.SaveChangesAsync();
+            LeadMapper.UpdateEntity(entity, request);
+            await db.SaveChangesAsync();
 
-        return Result<LeadResponse>.Ok(LeadMapper.ToResponse(entity));
+            return Result<LeadResponse>.Ok(LeadMapper.ToResponse(entity));
+        }
+        catch (Exception ex)
+        {
+            return Result<LeadResponse>.Fail($"Failed to update lead: {ex.Message}");
+        }
     }
 
     public async Task<Result<bool>> DeleteAsync(Guid id)
     {
-        var entity = await db.Leads.FirstOrDefaultAsync(l => l.Id == id);
-        if (entity is null)
-            return Result<bool>.Fail($"Lead with id '{id}' was not found.");
+        try
+        {
+            var entity = await db.Leads.FirstOrDefaultAsync(l => l.Id == id);
+            if (entity is null)
+                return Result<bool>.Fail($"Lead with id '{id}' was not found.");
 
-        db.Leads.Remove(entity);
-        await db.SaveChangesAsync();
+            db.Leads.Remove(entity);
+            await db.SaveChangesAsync();
 
-        return Result<bool>.Ok(true);
+            return Result<bool>.Ok(true);
+        }
+        catch (Exception ex)
+        {
+            return Result<bool>.Fail($"Failed to delete lead: {ex.Message}");
+        }
     }
 }

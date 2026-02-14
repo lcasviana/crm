@@ -1,4 +1,5 @@
 using CrmDotnetApi.Data;
+using CrmDotnetApi.Middleware;
 using CrmDotnetApi.Services;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -70,6 +71,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();

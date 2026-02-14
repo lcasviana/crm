@@ -11,17 +11,31 @@ public class DealService(CrmDbContext db, IValidator<DealRequest> validator) : I
 {
     public async Task<Result<List<DealResponse>>> GetAllAsync()
     {
-        var deals = await db.Deals.AsNoTracking().ToListAsync();
-        return Result<List<DealResponse>>.Ok(deals.Select(DealMapper.ToResponse).ToList());
+        try
+        {
+            var deals = await db.Deals.AsNoTracking().ToListAsync();
+            return Result<List<DealResponse>>.Ok(deals.Select(DealMapper.ToResponse).ToList());
+        }
+        catch (Exception ex)
+        {
+            return Result<List<DealResponse>>.Fail($"Failed to retrieve deals: {ex.Message}");
+        }
     }
 
     public async Task<Result<DealResponse>> GetByIdAsync(Guid id)
     {
-        var deal = await db.Deals.AsNoTracking().FirstOrDefaultAsync(d => d.Id == id);
-        if (deal is null)
-            return Result<DealResponse>.Fail($"Deal with id '{id}' was not found.");
+        try
+        {
+            var deal = await db.Deals.AsNoTracking().FirstOrDefaultAsync(d => d.Id == id);
+            if (deal is null)
+                return Result<DealResponse>.Fail($"Deal with id '{id}' was not found.");
 
-        return Result<DealResponse>.Ok(DealMapper.ToResponse(deal));
+            return Result<DealResponse>.Ok(DealMapper.ToResponse(deal));
+        }
+        catch (Exception ex)
+        {
+            return Result<DealResponse>.Fail($"Failed to retrieve deal: {ex.Message}");
+        }
     }
 
     public async Task<Result<DealResponse>> CreateAsync(DealRequest request)
@@ -30,15 +44,22 @@ public class DealService(CrmDbContext db, IValidator<DealRequest> validator) : I
         if (!validation.IsValid)
             return Result<DealResponse>.Fail(validation.Errors.Select(e => e.ErrorMessage).ToList());
 
-        var leadExists = await db.Leads.AnyAsync(l => l.Id == request.LeadId);
-        if (!leadExists)
-            return Result<DealResponse>.Fail($"Lead with id '{request.LeadId}' was not found.");
+        try
+        {
+            var leadExists = await db.Leads.AnyAsync(l => l.Id == request.LeadId);
+            if (!leadExists)
+                return Result<DealResponse>.Fail($"Lead with id '{request.LeadId}' was not found.");
 
-        var entity = DealMapper.ToEntity(request);
-        db.Deals.Add(entity);
-        await db.SaveChangesAsync();
+            var entity = DealMapper.ToEntity(request);
+            db.Deals.Add(entity);
+            await db.SaveChangesAsync();
 
-        return Result<DealResponse>.Ok(DealMapper.ToResponse(entity));
+            return Result<DealResponse>.Ok(DealMapper.ToResponse(entity));
+        }
+        catch (Exception ex)
+        {
+            return Result<DealResponse>.Fail($"Failed to create deal: {ex.Message}");
+        }
     }
 
     public async Task<Result<DealResponse>> UpdateAsync(Guid id, DealRequest request)
@@ -47,29 +68,43 @@ public class DealService(CrmDbContext db, IValidator<DealRequest> validator) : I
         if (!validation.IsValid)
             return Result<DealResponse>.Fail(validation.Errors.Select(e => e.ErrorMessage).ToList());
 
-        var entity = await db.Deals.FirstOrDefaultAsync(d => d.Id == id);
-        if (entity is null)
-            return Result<DealResponse>.Fail($"Deal with id '{id}' was not found.");
+        try
+        {
+            var entity = await db.Deals.FirstOrDefaultAsync(d => d.Id == id);
+            if (entity is null)
+                return Result<DealResponse>.Fail($"Deal with id '{id}' was not found.");
 
-        var leadExists = await db.Leads.AnyAsync(l => l.Id == request.LeadId);
-        if (!leadExists)
-            return Result<DealResponse>.Fail($"Lead with id '{request.LeadId}' was not found.");
+            var leadExists = await db.Leads.AnyAsync(l => l.Id == request.LeadId);
+            if (!leadExists)
+                return Result<DealResponse>.Fail($"Lead with id '{request.LeadId}' was not found.");
 
-        DealMapper.UpdateEntity(entity, request);
-        await db.SaveChangesAsync();
+            DealMapper.UpdateEntity(entity, request);
+            await db.SaveChangesAsync();
 
-        return Result<DealResponse>.Ok(DealMapper.ToResponse(entity));
+            return Result<DealResponse>.Ok(DealMapper.ToResponse(entity));
+        }
+        catch (Exception ex)
+        {
+            return Result<DealResponse>.Fail($"Failed to update deal: {ex.Message}");
+        }
     }
 
     public async Task<Result<bool>> DeleteAsync(Guid id)
     {
-        var entity = await db.Deals.FirstOrDefaultAsync(d => d.Id == id);
-        if (entity is null)
-            return Result<bool>.Fail($"Deal with id '{id}' was not found.");
+        try
+        {
+            var entity = await db.Deals.FirstOrDefaultAsync(d => d.Id == id);
+            if (entity is null)
+                return Result<bool>.Fail($"Deal with id '{id}' was not found.");
 
-        db.Deals.Remove(entity);
-        await db.SaveChangesAsync();
+            db.Deals.Remove(entity);
+            await db.SaveChangesAsync();
 
-        return Result<bool>.Ok(true);
+            return Result<bool>.Ok(true);
+        }
+        catch (Exception ex)
+        {
+            return Result<bool>.Fail($"Failed to delete deal: {ex.Message}");
+        }
     }
 }
