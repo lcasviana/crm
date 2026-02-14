@@ -1,0 +1,13 @@
+namespace CrmDotnetApi.Models;
+
+public class Lead
+{
+    public Guid Id { get; set; }
+    public required string FirstName { get; set; }
+    public required string LastName { get; set; }
+    public required string Email { get; set; }
+    public string? Phone { get; set; }
+    public string? Source { get; set; }
+    public LeadStatus Status { get; set; } = LeadStatus.New;
+    public List<Deal> Deals { get; set; } = [];
+}
