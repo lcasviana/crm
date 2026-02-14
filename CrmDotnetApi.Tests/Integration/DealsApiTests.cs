@@ -74,7 +74,8 @@ public class DealsApiTests : IClassFixture<CrmApiFactory>
             new DealRequest("Deal", 5000m, null, DealStage.Prospecting, leadId));
         var created = await createResponse.Content.ReadFromJsonAsync<ApiResponse<DealResponse>>();
 
-        var updateRequest = new DealRequest("Updated", 15000m, DateTime.UtcNow.AddDays(60), DealStage.Negotiation, leadId);
+        var updateRequest =
+            new DealRequest("Updated", 15000m, DateTime.UtcNow.AddDays(60), DealStage.Negotiation, leadId);
         var response = await _client.PutAsJsonAsync($"/api/deals/{created!.Data!.Id}", updateRequest);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

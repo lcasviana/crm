@@ -21,7 +21,7 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
             var response = new
             {
                 status = context.Response.StatusCode,
-                message = "An unexpected error occurred.",
+                message = "An unexpected error occurred."
             };
 
             await context.Response.WriteAsync(JsonSerializer.Serialize(response));

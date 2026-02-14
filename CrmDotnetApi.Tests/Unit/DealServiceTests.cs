@@ -11,8 +11,8 @@ namespace CrmDotnetApi.Tests.Unit;
 public class DealServiceTests : IDisposable
 {
     private readonly CrmDbContext _db;
-    private readonly DealService _sut;
     private readonly LeadService _leadService;
+    private readonly DealService _sut;
 
     public DealServiceTests()
     {
@@ -25,7 +25,10 @@ public class DealServiceTests : IDisposable
         _leadService = new LeadService(_db, new LeadRequestValidator());
     }
 
-    public void Dispose() => _db.Dispose();
+    public void Dispose()
+    {
+        _db.Dispose();
+    }
 
     private async Task<Guid> CreateTestLeadAsync()
     {
@@ -102,7 +105,8 @@ public class DealServiceTests : IDisposable
     {
         var leadId = await CreateTestLeadAsync();
         var created = await _sut.CreateAsync(new DealRequest("Deal", 5000m, null, DealStage.Prospecting, leadId));
-        var updateRequest = new DealRequest("Updated Deal", 15000m, DateTime.UtcNow.AddDays(60), DealStage.Proposal, leadId);
+        var updateRequest =
+            new DealRequest("Updated Deal", 15000m, DateTime.UtcNow.AddDays(60), DealStage.Proposal, leadId);
 
         var result = await _sut.UpdateAsync(created.Data!.Id, updateRequest);
 

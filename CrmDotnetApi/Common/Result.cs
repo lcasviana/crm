@@ -2,10 +2,6 @@ namespace CrmDotnetApi.Common;
 
 public class Result<T>
 {
-    public bool Success { get; }
-    public T? Data { get; }
-    public List<string> Errors { get; }
-
     private Result(bool success, T? data, List<string>? errors)
     {
         Success = success;
@@ -13,7 +9,22 @@ public class Result<T>
         Errors = errors ?? [];
     }
 
-    public static Result<T> Ok(T data) => new(true, data, null);
-    public static Result<T> Fail(string error) => new(false, default, [error]);
-    public static Result<T> Fail(List<string> errors) => new(false, default, errors);
+    public bool Success { get; }
+    public T? Data { get; }
+    public List<string> Errors { get; }
+
+    public static Result<T> Ok(T data)
+    {
+        return new Result<T>(true, data, null);
+    }
+
+    public static Result<T> Fail(string error)
+    {
+        return new Result<T>(false, default, [error]);
+    }
+
+    public static Result<T> Fail(List<string> errors)
+    {
+        return new Result<T>(false, default, errors);
+    }
 }

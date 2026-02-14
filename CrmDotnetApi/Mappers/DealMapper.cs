@@ -5,15 +5,18 @@ namespace CrmDotnetApi.Mappers;
 
 public static class DealMapper
 {
-    public static Deal ToEntity(DealRequest request) => new()
+    public static Deal ToEntity(DealRequest request)
     {
-        Id = Guid.NewGuid(),
-        Title = request.Title,
-        Value = request.Value,
-        CloseDate = request.CloseDate,
-        Stage = request.Stage,
-        LeadId = request.LeadId
-    };
+        return new Deal
+        {
+            Id = Guid.NewGuid(),
+            Title = request.Title,
+            Value = request.Value,
+            CloseDate = request.CloseDate,
+            Stage = request.Stage,
+            LeadId = request.LeadId
+        };
+    }
 
     public static void UpdateEntity(Deal entity, DealRequest request)
     {
@@ -24,12 +27,15 @@ public static class DealMapper
         entity.LeadId = request.LeadId;
     }
 
-    public static DealResponse ToResponse(Deal entity) => new(
-        entity.Id,
-        entity.Title,
-        entity.Value,
-        entity.CloseDate,
-        entity.Stage,
-        entity.LeadId
-    );
+    public static DealResponse ToResponse(Deal entity)
+    {
+        return new DealResponse(
+            entity.Id,
+            entity.Title,
+            entity.Value,
+            entity.CloseDate,
+            entity.Stage,
+            entity.LeadId
+        );
+    }
 }

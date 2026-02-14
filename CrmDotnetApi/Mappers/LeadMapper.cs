@@ -5,16 +5,19 @@ namespace CrmDotnetApi.Mappers;
 
 public static class LeadMapper
 {
-    public static Lead ToEntity(LeadRequest request) => new()
+    public static Lead ToEntity(LeadRequest request)
     {
-        Id = Guid.NewGuid(),
-        FirstName = request.FirstName,
-        LastName = request.LastName,
-        Email = request.Email,
-        Phone = request.Phone,
-        Source = request.Source,
-        Status = request.Status
-    };
+        return new Lead
+        {
+            Id = Guid.NewGuid(),
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Email = request.Email,
+            Phone = request.Phone,
+            Source = request.Source,
+            Status = request.Status
+        };
+    }
 
     public static void UpdateEntity(Lead entity, LeadRequest request)
     {
@@ -26,14 +29,17 @@ public static class LeadMapper
         entity.Status = request.Status;
     }
 
-    public static LeadResponse ToResponse(Lead entity) => new(
-        entity.Id,
-        entity.FirstName,
-        entity.LastName,
-        entity.Email,
-        entity.Phone,
-        entity.Source,
-        entity.Status,
-        entity.Deals.Select(DealMapper.ToResponse).ToList()
-    );
+    public static LeadResponse ToResponse(Lead entity)
+    {
+        return new LeadResponse(
+            entity.Id,
+            entity.FirstName,
+            entity.LastName,
+            entity.Email,
+            entity.Phone,
+            entity.Source,
+            entity.Status,
+            entity.Deals.Select(DealMapper.ToResponse).ToList()
+        );
+    }
 }

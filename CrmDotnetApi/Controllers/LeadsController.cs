@@ -24,7 +24,7 @@ public class LeadsController(ILeadService leadService) : ApiControllerBase
     public async Task<IActionResult> Create([FromBody] LeadRequest request)
     {
         var result = await leadService.CreateAsync(request);
-        return ToActionResult(result, successStatusCode: 201);
+        return ToActionResult(result, 201);
     }
 
     [HttpPut("{id:guid}")]

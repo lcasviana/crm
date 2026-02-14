@@ -24,7 +24,7 @@ public class DealsController(IDealService dealService) : ApiControllerBase
     public async Task<IActionResult> Create([FromBody] DealRequest request)
     {
         var result = await dealService.CreateAsync(request);
-        return ToActionResult(result, successStatusCode: 201);
+        return ToActionResult(result, 201);
     }
 
     [HttpPut("{id:guid}")]

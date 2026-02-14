@@ -22,7 +22,10 @@ public class LeadServiceTests : IDisposable
         _sut = new LeadService(_db, new LeadRequestValidator());
     }
 
-    public void Dispose() => _db.Dispose();
+    public void Dispose()
+    {
+        _db.Dispose();
+    }
 
     [Fact]
     public async Task GetAllAsync_ReturnsEmptyList_WhenNoLeads()

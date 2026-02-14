@@ -38,30 +38,38 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var connection = scope.ServiceProvider.GetRequiredService<LibSQLConnection>();
-    using var cmd = connection.CreateCommand();
-    cmd.CommandText = """
-        CREATE TABLE IF NOT EXISTS Leads (
-            Id TEXT NOT NULL PRIMARY KEY,
-            FirstName TEXT NOT NULL,
-            LastName TEXT NOT NULL,
-            Email TEXT NOT NULL,
-            Phone TEXT NULL,
-            Source TEXT NULL,
-            Status TEXT NOT NULL
-        );
-        CREATE TABLE IF NOT EXISTS Deals (
-            Id TEXT NOT NULL PRIMARY KEY,
-            Title TEXT NOT NULL,
-            Value TEXT NOT NULL,
-            CloseDate TEXT NULL,
-            Stage TEXT NOT NULL,
-            LeadId TEXT NOT NULL,
-            FOREIGN KEY (LeadId) REFERENCES Leads(Id) ON DELETE CASCADE
-        );
-        CREATE INDEX IF NOT EXISTS IX_Deals_LeadId ON Deals(LeadId);
-        """;
-    cmd.ExecuteNonQuery();
+    var connection = scope.ServiceProvider.GetService<LibSQLConnection>();
+    if (connection is not null)
+    {
+        using var cmd = connection.CreateCommand();
+        cmd.CommandText = """
+                          CREATE TABLE IF NOT EXISTS Leads (
+                              Id TEXT NOT NULL PRIMARY KEY,
+                              FirstName TEXT NOT NULL,
+                              LastName TEXT NOT NULL,
+                              Email TEXT NOT NULL,
+                              Phone TEXT NULL,
+                              Source TEXT NULL,
+                              Status TEXT NOT NULL
+                          );
+                          CREATE TABLE IF NOT EXISTS Deals (
+                              Id TEXT NOT NULL PRIMARY KEY,
+                              Title TEXT NOT NULL,
+                              Value TEXT NOT NULL,
+                              CloseDate TEXT NULL,
+                              Stage TEXT NOT NULL,
+                              LeadId TEXT NOT NULL,
+                              FOREIGN KEY (LeadId) REFERENCES Leads(Id) ON DELETE CASCADE
+                          );
+                          CREATE INDEX IF NOT EXISTS IX_Deals_LeadId ON Deals(LeadId);
+                          """;
+        cmd.ExecuteNonQuery();
+    }
+    else
+    {
+        var db = scope.ServiceProvider.GetRequiredService<CrmDbContext>();
+        db.Database.EnsureCreated();
+    }
 }
 
 if (app.Environment.IsDevelopment())

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Nelknet.LibSQL.Data;
 
 namespace CrmDotnetApi.Tests.Integration;
 
@@ -21,10 +22,16 @@ public class CrmApiFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
-            var descriptor = services.SingleOrDefault(d =>
-                d.ServiceType == typeof(DbContextOptions<CrmDbContext>));
+            // Remove all EF Core and LibSQL registrations from the production setup
+            var descriptorsToRemove = services.Where(d =>
+                    d.ServiceType == typeof(LibSQLConnection) ||
+                    d.ServiceType == typeof(DbContextOptions<CrmDbContext>) ||
+                    (d.ServiceType.IsGenericType &&
+                     d.ServiceType.GetGenericTypeDefinition() == typeof(DbContextOptions<>)) ||
+                    d.ServiceType.FullName?.Contains("IDbContextOptionsConfiguration") == true)
+                .ToList();
 
-            if (descriptor is not null)
+            foreach (var descriptor in descriptorsToRemove)
                 services.Remove(descriptor);
 
             services.AddDbContext<CrmDbContext>(options =>

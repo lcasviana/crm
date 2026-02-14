@@ -15,8 +15,10 @@ public class LeadsApiTests : IClassFixture<CrmApiFactory>
         _client = factory.CreateClient();
     }
 
-    private static LeadRequest ValidLead(string email = "test@example.com") =>
-        new("John", "Doe", email, "555-0100", "Web");
+    private static LeadRequest ValidLead(string email = "test@example.com")
+    {
+        return new LeadRequest("John", "Doe", email, "555-0100", "Web");
+    }
 
     [Fact]
     public async Task GetAll_ReturnsOk()
