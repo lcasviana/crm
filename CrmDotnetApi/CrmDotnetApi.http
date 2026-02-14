@@ -1,1 +1,73 @@
 @CrmDotnetApi_HostAddress = http://localhost:5019
+
+### Leads - Get All
+GET {{CrmDotnetApi_HostAddress}}/api/leads
+Accept: application/json
+
+### Leads - Get By Id
+GET {{CrmDotnetApi_HostAddress}}/api/leads/{{leadId}}
+Accept: application/json
+
+### Leads - Create
+POST {{CrmDotnetApi_HostAddress}}/api/leads
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "phone": "555-0100",
+  "source": "Website",
+  "status": "New"
+}
+
+### Leads - Update
+PUT {{CrmDotnetApi_HostAddress}}/api/leads/{{leadId}}
+Content-Type: application/json
+
+{
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "email": "jane.doe@example.com",
+  "phone": "555-0200",
+  "source": "Referral",
+  "status": "Contacted"
+}
+
+### Leads - Delete
+DELETE {{CrmDotnetApi_HostAddress}}/api/leads/{{leadId}}
+
+### Deals - Get All
+GET {{CrmDotnetApi_HostAddress}}/api/deals
+Accept: application/json
+
+### Deals - Get By Id
+GET {{CrmDotnetApi_HostAddress}}/api/deals/{{dealId}}
+Accept: application/json
+
+### Deals - Create
+POST {{CrmDotnetApi_HostAddress}}/api/deals
+Content-Type: application/json
+
+{
+  "title": "Enterprise License",
+  "value": 50000.00,
+  "closeDate": "2026-03-15",
+  "stage": "Prospecting",
+  "leadId": "{{leadId}}"
+}
+
+### Deals - Update
+PUT {{CrmDotnetApi_HostAddress}}/api/deals/{{dealId}}
+Content-Type: application/json
+
+{
+  "title": "Enterprise License - Renewed",
+  "value": 75000.00,
+  "closeDate": "2026-06-01",
+  "stage": "Negotiation",
+  "leadId": "{{leadId}}"
+}
+
+### Deals - Delete
+DELETE {{CrmDotnetApi_HostAddress}}/api/deals/{{dealId}}
