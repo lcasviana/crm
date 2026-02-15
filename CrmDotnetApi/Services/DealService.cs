@@ -27,10 +27,9 @@ public class DealService(CrmDbContext db, IValidator<DealRequest> validator) : I
         try
         {
             var deal = await db.Deals.AsNoTracking().FirstOrDefaultAsync(d => d.Id == id);
-            if (deal is null)
-                return Result<DealResponse>.Fail($"Deal with id '{id}' was not found.");
-
-            return Result<DealResponse>.Ok(DealMapper.ToResponse(deal));
+            return deal is null
+                ? Result<DealResponse>.Fail($"Deal with id '{id}' was not found.")
+                : Result<DealResponse>.Ok(DealMapper.ToResponse(deal));
         }
         catch (Exception ex)
         {

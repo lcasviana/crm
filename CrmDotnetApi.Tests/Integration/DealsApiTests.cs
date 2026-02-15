@@ -7,14 +7,9 @@ using CrmDotnetApi.Models;
 
 namespace CrmDotnetApi.Tests.Integration;
 
-public class DealsApiTests : IClassFixture<CrmApiFactory>
+public class DealsApiTests(CrmApiFactory factory) : IClassFixture<CrmApiFactory>
 {
-    private readonly HttpClient _client;
-
-    public DealsApiTests(CrmApiFactory factory)
-    {
-        _client = factory.CreateClient();
-    }
+    private readonly HttpClient _client = factory.CreateClient();
 
     private async Task<Guid> CreateLeadAsync()
     {

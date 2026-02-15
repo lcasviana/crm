@@ -6,14 +6,9 @@ using CrmDotnetApi.Models;
 
 namespace CrmDotnetApi.Tests.Integration;
 
-public class LeadsApiTests : IClassFixture<CrmApiFactory>
+public class LeadsApiTests(CrmApiFactory factory) : IClassFixture<CrmApiFactory>
 {
-    private readonly HttpClient _client;
-
-    public LeadsApiTests(CrmApiFactory factory)
-    {
-        _client = factory.CreateClient();
-    }
+    private readonly HttpClient _client = factory.CreateClient();
 
     private static LeadRequest ValidLead(string email = "test@example.com")
     {

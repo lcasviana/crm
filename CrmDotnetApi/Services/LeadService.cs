@@ -27,10 +27,9 @@ public class LeadService(CrmDbContext db, IValidator<LeadRequest> validator) : I
         try
         {
             var lead = await db.Leads.Include(l => l.Deals).AsNoTracking().FirstOrDefaultAsync(l => l.Id == id);
-            if (lead is null)
-                return Result<LeadResponse>.Fail($"Lead with id '{id}' was not found.");
-
-            return Result<LeadResponse>.Ok(LeadMapper.ToResponse(lead));
+            return lead is null
+                ? Result<LeadResponse>.Fail($"Lead with id '{id}' was not found.")
+                : Result<LeadResponse>.Ok(LeadMapper.ToResponse(lead));
         }
         catch (Exception ex)
         {

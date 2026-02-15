@@ -8,21 +8,35 @@ using Nelknet.LibSQL.Data;
 
 namespace CrmDotnetApi.Tests.Integration;
 
-public class CrmApiFactory : WebApplicationFactory<Program>
+public abstract class CrmApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly SqliteConnection _connection;
 
-    public CrmApiFactory()
+    protected CrmApiFactory()
     {
         _connection = new SqliteConnection("Data Source=:memory:");
         _connection.Open();
+    }
+
+    public async Task InitializeAsync()
+    {
+        var options = new DbContextOptionsBuilder<CrmDbContext>()
+            .UseSqlite(_connection)
+            .Options;
+
+        await using var context = new CrmDbContext(options);
+        await context.Database.EnsureCreatedAsync();
+    }
+
+    Task IAsyncLifetime.DisposeAsync()
+    {
+        return Task.CompletedTask;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
-            // Remove all EF Core and LibSQL registrations from the production setup
             var descriptorsToRemove = services.Where(d =>
                     d.ServiceType == typeof(LibSQLConnection) ||
                     d.ServiceType == typeof(DbContextOptions<CrmDbContext>) ||
