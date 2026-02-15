@@ -1,3 +1,4 @@
+using CrmDotnetApi.Common;
 using CrmDotnetApi.Data;
 using CrmDotnetApi.DTOs.Leads;
 using CrmDotnetApi.Models;
@@ -30,10 +31,10 @@ public class LeadServiceTests : IDisposable
     [Fact]
     public async Task GetAllAsync_ReturnsEmptyList_WhenNoLeads()
     {
-        var result = await _sut.GetAllAsync();
+        var result = await _sut.GetAllAsync(new PaginationQuery());
 
         Assert.True(result.Success);
-        Assert.Empty(result.Data!);
+        Assert.Empty(result.Data!.Items);
     }
 
     [Fact]

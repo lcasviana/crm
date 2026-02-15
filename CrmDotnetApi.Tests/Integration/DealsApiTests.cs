@@ -25,7 +25,7 @@ public class DealsApiTests(CrmApiFactory factory) : IClassFixture<CrmApiFactory>
         var response = await _client.GetAsync("/api/deals");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var body = await response.Content.ReadFromJsonAsync<ApiResponse<List<DealResponse>>>();
+        var body = await response.Content.ReadFromJsonAsync<ApiResponse<PagedResult<DealResponse>>>();
         Assert.True(body!.Success);
     }
 

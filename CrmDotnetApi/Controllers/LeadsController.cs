@@ -1,3 +1,4 @@
+using CrmDotnetApi.Common;
 using CrmDotnetApi.DTOs.Leads;
 using CrmDotnetApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -7,9 +8,9 @@ namespace CrmDotnetApi.Controllers;
 public class LeadsController(ILeadService leadService) : ApiControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] PaginationQuery pagination)
     {
-        var result = await leadService.GetAllAsync();
+        var result = await leadService.GetAllAsync(pagination);
         return ToActionResult(result);
     }
 

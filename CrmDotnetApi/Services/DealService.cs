@@ -9,16 +9,29 @@ namespace CrmDotnetApi.Services;
 
 public class DealService(CrmDbContext db, IValidator<DealRequest> validator) : IDealService
 {
-    public async Task<Result<List<DealResponse>>> GetAllAsync()
+    public async Task<Result<PagedResult<DealResponse>>> GetAllAsync(PaginationQuery pagination)
     {
         try
         {
-            var deals = await db.Deals.AsNoTracking().ToListAsync();
-            return Result<List<DealResponse>>.Ok(deals.Select(DealMapper.ToResponse).ToList());
+            var totalCount = await db.Deals.CountAsync();
+            var deals = await db.Deals
+                .AsNoTracking()
+                .Skip((pagination.Page - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToListAsync();
+
+            var pagedResult = new PagedResult<DealResponse>(
+                deals.Select(DealMapper.ToResponse).ToList(),
+                pagination.Page,
+                pagination.PageSize,
+                totalCount
+            );
+
+            return Result<PagedResult<DealResponse>>.Ok(pagedResult);
         }
         catch (Exception ex)
         {
-            return Result<List<DealResponse>>.Fail($"Failed to retrieve deals: {ex.Message}");
+            return Result<PagedResult<DealResponse>>.Fail($"Failed to retrieve deals: {ex.Message}");
         }
     }
 

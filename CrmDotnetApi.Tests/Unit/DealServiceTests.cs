@@ -1,3 +1,4 @@
+using CrmDotnetApi.Common;
 using CrmDotnetApi.Data;
 using CrmDotnetApi.DTOs.Deals;
 using CrmDotnetApi.DTOs.Leads;
@@ -39,10 +40,10 @@ public class DealServiceTests : IDisposable
     [Fact]
     public async Task GetAllAsync_ReturnsEmptyList_WhenNoDeals()
     {
-        var result = await _sut.GetAllAsync();
+        var result = await _sut.GetAllAsync(new PaginationQuery());
 
         Assert.True(result.Success);
-        Assert.Empty(result.Data!);
+        Assert.Empty(result.Data!.Items);
     }
 
     [Fact]

@@ -9,16 +9,30 @@ namespace CrmDotnetApi.Services;
 
 public class LeadService(CrmDbContext db, IValidator<LeadRequest> validator) : ILeadService
 {
-    public async Task<Result<List<LeadResponse>>> GetAllAsync()
+    public async Task<Result<PagedResult<LeadResponse>>> GetAllAsync(PaginationQuery pagination)
     {
         try
         {
-            var leads = await db.Leads.Include(l => l.Deals).AsNoTracking().ToListAsync();
-            return Result<List<LeadResponse>>.Ok(leads.Select(LeadMapper.ToResponse).ToList());
+            var totalCount = await db.Leads.CountAsync();
+            var leads = await db.Leads
+                .Include(l => l.Deals)
+                .AsNoTracking()
+                .Skip((pagination.Page - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToListAsync();
+
+            var pagedResult = new PagedResult<LeadResponse>(
+                leads.Select(LeadMapper.ToResponse).ToList(),
+                pagination.Page,
+                pagination.PageSize,
+                totalCount
+            );
+
+            return Result<PagedResult<LeadResponse>>.Ok(pagedResult);
         }
         catch (Exception ex)
         {
-            return Result<List<LeadResponse>>.Fail($"Failed to retrieve leads: {ex.Message}");
+            return Result<PagedResult<LeadResponse>>.Fail($"Failed to retrieve leads: {ex.Message}");
         }
     }
 

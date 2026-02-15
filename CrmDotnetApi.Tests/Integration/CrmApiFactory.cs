@@ -8,11 +8,11 @@ using Nelknet.LibSQL.Data;
 
 namespace CrmDotnetApi.Tests.Integration;
 
-public abstract class CrmApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
+public class CrmApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly SqliteConnection _connection;
 
-    protected CrmApiFactory()
+    public CrmApiFactory()
     {
         _connection = new SqliteConnection("Data Source=:memory:");
         _connection.Open();

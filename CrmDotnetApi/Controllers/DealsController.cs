@@ -1,3 +1,4 @@
+using CrmDotnetApi.Common;
 using CrmDotnetApi.DTOs.Deals;
 using CrmDotnetApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -7,9 +8,9 @@ namespace CrmDotnetApi.Controllers;
 public class DealsController(IDealService dealService) : ApiControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] PaginationQuery pagination)
     {
-        var result = await dealService.GetAllAsync();
+        var result = await dealService.GetAllAsync(pagination);
         return ToActionResult(result);
     }
 

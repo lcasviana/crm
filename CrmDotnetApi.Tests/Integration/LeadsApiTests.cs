@@ -21,7 +21,7 @@ public class LeadsApiTests(CrmApiFactory factory) : IClassFixture<CrmApiFactory>
         var response = await _client.GetAsync("/api/leads");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var body = await response.Content.ReadFromJsonAsync<ApiResponse<List<LeadResponse>>>();
+        var body = await response.Content.ReadFromJsonAsync<ApiResponse<PagedResult<LeadResponse>>>();
         Assert.NotNull(body);
         Assert.True(body.Success);
     }
