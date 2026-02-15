@@ -1,0 +1,12 @@
+# Compiled
+/dist
+
+# Node
+/node_modules
+
+# Angular
+/.angular
+
+# System
+.DS_Store
+Thumbs.db

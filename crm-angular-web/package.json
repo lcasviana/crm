@@ -1,0 +1,49 @@
+{
+  "name": "crm",
+  "private": true,
+  "scripts": {
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch",
+    "prepare": "husky",
+    "eslint:check": "eslint .",
+    "eslint:write": "eslint . --fix",
+    "prettier:check": "prettier -c --log-level=warn .",
+    "prettier:write": "prettier -lw --log-level=warn .",
+    "lint:check": "bun run --parallel eslint:check prettier:check",
+    "lint:write": "bun run --sequential eslint:write prettier:write",
+    "npm:check": "bunx npm-check-updates"
+  },
+  "dependencies": {
+    "@angular/animations": "^21",
+    "@angular/cdk": "^21",
+    "@angular/common": "^21",
+    "@angular/compiler": "^21",
+    "@angular/core": "^21",
+    "@angular/forms": "^21",
+    "@angular/material": "^21",
+    "@angular/platform-browser": "^21",
+    "@angular/router": "^21",
+    "@material/material-color-utilities": "^0.4.0",
+    "@ngrx/signals": "^21",
+    "rxjs": "^7",
+    "tslib": "^2"
+  },
+  "devDependencies": {
+    "@angular/build": "^21",
+    "@angular/cli": "^21",
+    "@angular/compiler-cli": "^21",
+    "@eslint/js": "^9.39",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^24",
+    "angular-eslint": "^21.2",
+    "eslint": "^9.39",
+    "husky": "^9",
+    "postcss": "^8",
+    "prettier": "^3",
+    "prettier-plugin-tailwindcss": "^0.7",
+    "tailwindcss": "^4",
+    "typescript": "^5.9",
+    "typescript-eslint": "^8.55"
+  }
+}

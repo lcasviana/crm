@@ -1,0 +1,84 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": false,
+    "cache": {
+      "enabled": true
+    },
+    "packageManager": "bun",
+    "schematicCollections": []
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "crm": {
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "configurations": {
+            "dev": {
+              "optimization": false,
+              "outputHashing": "none",
+              "sourceMap": true
+            },
+            "prd": {
+              "budgets": [
+                {
+                  "maximumError": "1MB",
+                  "maximumWarning": "500kB",
+                  "type": "initial"
+                },
+                {
+                  "maximumError": "8kB",
+                  "maximumWarning": "4kB",
+                  "type": "anyComponentStyle"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/envs/env.ts",
+                  "with": "src/envs/env.prd.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false
+            }
+          },
+          "defaultConfiguration": "prd",
+          "options": {
+            "assets": ["src/favicon.ico"],
+            "browser": "src/index.ts",
+            "index": "src/index.html",
+            "inlineStyleLanguage": "scss",
+            "outputPath": {
+              "base": "dist/crm",
+              "browser": ""
+            },
+            "stylePreprocessorOptions": {
+              "includePaths": ["src"]
+            },
+            "styles": ["src/styles/material.scss", "src/styles/tailwind.css"],
+            "tsConfig": "tsconfig.app.json"
+          }
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "dev": {
+              "buildTarget": "crm:build:dev"
+            },
+            "prd": {
+              "buildTarget": "crm:build:prd"
+            }
+          },
+          "defaultConfiguration": "dev"
+        }
+      },
+      "prefix": "crm",
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src"
+    }
+  },
+  "version": 1
+}

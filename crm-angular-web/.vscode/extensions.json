@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    /* Angular */ "angular.ng-template",
+    /* EditorConfig */ "editorconfig.editorconfig",
+    /* ESLint */ "dbaeumer.vscode-eslint",
+    /* Prettier */ "esbenp.prettier-vscode",
+    /* TailwindCSS */ "bradlc.vscode-tailwindcss"
+  ]
+}
