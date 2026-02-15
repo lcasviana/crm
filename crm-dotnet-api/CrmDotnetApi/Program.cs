@@ -33,6 +33,7 @@ builder.Services.AddDbContext<CrmDbContext>((sp, options) =>
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddScoped<ILeadService, LeadService>();
 builder.Services.AddScoped<IDealService, DealService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 var app = builder.Build();
 
